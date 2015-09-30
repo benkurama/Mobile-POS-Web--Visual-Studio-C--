@@ -1,0 +1,1146 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;    
+using libPOS.BLL;
+using System.Drawing;
+
+namespace MobilePOS
+{
+    
+
+    public partial class KioskAssignment : System.Web.UI.Page
+    {
+        public enum ProductType
+        {
+            Phone = 1,
+            Tablet = 2,
+            Accessory = 3
+        }
+
+        private void CallDataGrid()
+        {
+            gvKiosk.DataSource = Kiosk.GetAllKiosk();
+            gvKiosk.DataBind();
+        }
+
+        private void loadSupervisor()
+        {
+            ddlClass.DataSource = Kiosk_Class.GetAllSupervisor();
+            ddlClass.DataTextField = "SuperVisor";
+            ddlClass.DataValueField = "ClassID";
+            ddlClass.DataBind();
+            //
+            ListItem item = new ListItem();
+            item.Text = "   [<<<Select Here>>>]   ";
+            item.Value = "0";
+            ddlClass.Items.Insert(0, item);
+        }
+
+        private bool ValidateItemStocks()
+        {
+            //Phone Check
+            int phoneCount = gvStockPhone.Rows.Count;
+
+            for (int x = 0; x < phoneCount; x++ )
+            {
+                int stock = Convert.ToInt32(((TextBox)gvStockPhone.Rows[x].FindControl("tbStocks")).Text);
+                //
+                if(stock == 0){
+                    return false;
+                }
+            }
+
+            //Tablet Check
+            int tabletCount = gvStockTablet.Rows.Count;
+
+            for (int x = 0; x < tabletCount; x++)
+            {
+                int stock = Convert.ToInt32(((TextBox)gvStockTablet.Rows[x].FindControl("tbStocks")).Text);
+                //
+                if (stock == 0)
+                {
+                    return false;
+                }
+            }
+
+            //Accessory Check
+            int accessoryCount = gvStockAccessory.Rows.Count;
+
+            for (int x = 0; x < accessoryCount; x++)
+            {
+                int stock = Convert.ToInt32(((TextBox)gvStockAccessory.Rows[x].FindControl("tbStocks")).Text);
+                //
+                if (stock == 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void DoAssign(int id)
+        {
+            var instance = Kiosk.GetKioskByID(id);
+
+            hdnKioskID.Value = id.ToString();
+
+            LblKioskName.Text = instance.Name;
+            lblLocation.Text = instance.Location;
+
+            tbDistReciept.Text = "";
+            tbReference.Text = "";
+            //
+            //var collection = Stocks.GetKioskPhoneStocks(id, 0);
+            //if(collection.Count > 0) tbReference.Text = collection[0].Reference;
+            
+            /////
+            #region PHONE SET
+            lbxPhone.DataSource = Products.GetAllPhones();
+            lbxPhone.DataTextField = "Name";
+            lbxPhone.DataValueField = "ID";
+            lbxPhone.DataBind();
+            //
+            //lbxPhoneSel.DataSource = Stocks.GetKioskPhoneStocks(id, (int)ProductType.Phone);
+            //lbxPhoneSel.DataTextField = "ProdName";
+            //lbxPhoneSel.DataValueField = "ProdID";
+            //lbxPhoneSel.DataBind();
+            //
+            //foreach (ListItem li in lbxPhoneSel.Items)
+            //{
+            //    lbxPhone.Items.Remove(li);
+            //}
+            //lbxPhoneSel.ClearSelection(); 
+            #endregion
+            /////
+            #region TABLET SET
+            lbxTablet.DataSource = Products.GetAllTablets();
+            lbxTablet.DataTextField = "Name";
+            lbxTablet.DataValueField = "ID";
+            lbxTablet.DataBind();
+            //
+            //lbxTabletSel.DataSource = Stocks.GetKioskPhoneStocks(id, (int)ProductType.Tablet);
+            //lbxTabletSel.DataTextField = "ProdName";
+            //lbxTabletSel.DataValueField = "ProdID";
+            //lbxTabletSel.DataBind();
+            //
+            //foreach (ListItem li in lbxTabletSel.Items)
+            //{
+            //    lbxTablet.Items.Remove(li);
+            //}
+            //lbxTabletSel.ClearSelection(); 
+            #endregion
+            /////
+            #region ACCESSORY SET
+            lbxAccessory.DataSource = Products.GetAllAccessories();
+            lbxAccessory.DataTextField = "Name";
+            lbxAccessory.DataValueField = "ID";
+            lbxAccessory.DataBind();
+            //
+            
+            //lbxAccessorySel.DataSource = Stocks.GetKioskPhoneStocks(id, (int)ProductType.Accessory);
+            //lbxAccessorySel.DataTextField = "ProdName";
+            //lbxAccessorySel.DataValueField = "ProdID";
+            //lbxAccessorySel.DataBind();
+            //
+            //foreach (ListItem li in lbxAccessorySel.Items)
+            //{
+            //    lbxAccessory.Items.Remove(li);
+            //}
+            //lbxAccessorySel.ClearSelection();
+            #endregion
+
+            
+        }
+
+        private void DoSetStocks()
+        {
+            lblNameKiosk.Text = LblKioskName.Text;
+            lblLoc.Text = lblLocation.Text;
+            ///
+            gvStockPhone.DataSource = lbxPhoneSel.Items;
+            gvStockPhone.DataBind();
+            //
+            gvStockTablet.DataSource = lbxTabletSel.Items;
+            gvStockTablet.DataBind();
+            //
+            gvStockAccessory.DataSource = lbxAccessorySel.Items;
+            gvStockAccessory.DataBind();
+        }
+
+        private void DoSetIMEI(List<Stocks> newPhoneStocks)
+        {
+            //int index = PnlIMEI.Controls.OfType<TextBox>().ToList().Count + 1;
+            //this.testCreateTextbox("txtDynamic" + index);
+
+            ////////////////////////////////////////////
+
+            //int phoneCount = newPhoneStocks.Count;
+            ////
+            //GridView[] GridViewArr = new GridView[phoneCount];
+            ////
+            //List<StockListImei> sliList;
+            //Table tb = new Table();
+            //TableRow tr = new TableRow();
+
+            ////
+            //int z = 1;
+            //foreach (Stocks s in newPhoneStocks)
+            //{
+            //    //
+            //    int calc = z % 3;
+            //    //
+            //    TableCell td = new TableCell();
+
+
+            //    td.VerticalAlign = VerticalAlign.Top;
+            //    td.Style["padding"] = "5px";
+            //    ///
+            //    sliList = new List<StockListImei>();
+            //    int stocksCount = s.StockIn;
+
+            //    for (int x = 0; x < stocksCount; x++)
+            //    {
+            //        StockListImei sli = new StockListImei();
+            //        sli.ID = x + 1 + "";
+            //        //
+            //        sliList.Add(sli);
+            //    }
+
+            //    ///
+            //    GridView grid = new GridView();
+            //    grid.AutoGenerateColumns = false;
+            //    grid.GridLines = GridLines.None;
+            //    //
+
+            //    string prodname = lbxPhoneSel.Items.FindByValue(s.ProdID + "").Text;
+            //    BoundField bf = new BoundField();
+            //    bf.HeaderText = "No.";
+            //    bf.DataField = "ID";
+            //    bf.HeaderStyle.Width = 30;
+
+            //    TemplateField tf = new TemplateField();
+            //    tf.HeaderText = prodname + "<br/>IMEI No.";
+            //    tf.ItemTemplate = new AddTemplateToGridView(ListItemType.Item, "sonic");
+
+            //    grid.Columns.Add(bf);
+            //    grid.Columns.Add(tf);
+            //    //
+            //    grid.DataSource = sliList;
+            //    grid.DataBind();
+            //    ///
+            //    GridViewArr[z - 1] = grid;
+            //    ///
+            //    ///////////////
+
+            //    HtmlGenericControl Div = new HtmlGenericControl("div");
+            //    Div.ID = "ImeiDiv";
+            //    Div.Style["border"] = "1px solid #ccc";
+            //    Div.Style["padding"] = "5px";
+            //    Div.Style["width"] = "280px";
+            //    Div.Controls.Add(grid);
+            //    ///
+            //    td.Controls.Add(Div);
+
+            //    //tr = new TableRow();
+            //    if (calc == 1)
+            //    {
+            //        tr = new TableRow();
+            //    }
+            //    tr.Cells.Add(td);
+
+            //    tb.Rows.Add(tr);
+            //    ///
+            //    z++;
+            //}
+
+            ////
+            //PnlIMEI.Controls.Add(tb);
+
+
+            //foreach (GridView gv in GridViewArr)
+            //{
+            //    string s = ((TextBox)gv.Rows[0].FindControl("tbIMEI")).Text;
+            //}
+
+
+            //Session["GridViewArr"] = GridViewArr; 
+
+
+            /////////////////////////////////////////
+
+            //
+            //List<StockListImei> sliList = new List<StockListImei>();
+
+            //for (int x = 0; x < 3; x++ )
+            //{
+            //    StockListImei sli = new StockListImei();
+            //    sli.ID = x+1;
+
+            //    sliList.Add(sli);
+            //}
+            ////
+            //Table tb = new Table();
+
+            //TableRow tr = new TableRow();
+
+            //TableCell td = new TableCell();
+            //td.VerticalAlign = VerticalAlign.Top;
+            //td.Style["padding-right"] = "5px";
+
+            /////////////////
+            //GridView grid = new GridView();
+            //grid.AutoGenerateColumns = false;
+            //grid.GridLines = GridLines.None;
+            ////
+            //BoundField bf = new BoundField();
+            //bf.HeaderText = "No.";
+            //bf.DataField = "ID";
+            //bf.HeaderStyle.Width = 50;
+
+            //TemplateField tf = new TemplateField();
+            //tf.HeaderText = "IMEI";
+            //tf.ItemTemplate = new AddTemplateToGridView(ListItemType.Item, "sonic");
+
+            //grid.Columns.Add(bf);
+            //grid.Columns.Add(tf);
+            ////
+            //grid.DataSource = sliList;
+            //grid.DataBind();
+            /////////////////
+
+            //HtmlGenericControl Div = new HtmlGenericControl("div");
+            //Div.ID = "ImeiDiv";
+            //Div.Style["border"] = "1px solid #ccc";
+            //Div.Style["padding"] = "5px";
+            //Div.Style["width"] = "280px";
+            //Div.Controls.Add(grid);
+
+            //td.Controls.Add(Div);
+            //tr.Cells.Add(td);
+            //tb.Rows.Add(tr);
+            ////
+            //PnlIMEI.Controls.Add(tb);
+            //
+
+
+            
+
+            //
+
+            //PnlIMEI.Controls.Add(grid);
+
+            //phHold.Controls.Add(tb);
+        }
+
+        private void DoAdd()
+        {
+            mvMain.ActiveViewIndex = 3;
+            hdnKioskID.Value = "0";
+
+            tbKioskCode.Text = "";
+            tbKioskCode.Enabled = true;
+            tbKioskName.Text = "";
+            tbKioskLocation.Text = "";
+            tbKioskRemarks.Text = "";
+
+            //
+            loadSupervisor();
+        }
+
+        private void DoEdit(int id)
+        {
+            
+            hdnKioskID.Value = id + "";
+            var ins = Kiosk.SelectKioskByID(id);
+
+            tbKioskCode.Text = ins.KioskCode;
+            tbKioskCode.Enabled = false;
+
+            tbKioskName.Text = ins.Name;
+            tbKioskLocation.Text = ins.Location;
+            tbKioskRemarks.Text = ins.Remarks;
+            //
+            ddlClass.ClearSelection();
+            ddlClass.Items.FindByValue(ins.ClassID+"").Selected = true;
+        }
+
+        private void DoView(int id)
+        {
+            var ins = Kiosk.SelectKioskByID(id);
+            hdnKioskID.Value = Convert.ToString(id);
+
+            lblKioskLabel.Text = ins.Name;
+
+            gvInventory.DataSource = Inventory.GetAllByKiosk(id);
+            gvInventory.DataBind();
+        }
+
+        private void DoViewNewItems(int id)
+        {
+            //int id = Convert.ToInt32(hdnKioskID.Value);
+            var instance = Kiosk.GetKioskByID(id);
+            lblKioskNameList.Text = instance.Name;
+
+            gvNewItems.DataSource = Inventory.GetAllByKiosk(id);
+            gvNewItems.DataBind();
+        }
+
+        private void DoPrepareIMEI(int inventID)
+        {
+            /////
+            int id = Convert.ToInt32(hdnKioskID.Value);
+            List<Inventory> inventList = Inventory.GetAllByKiosk(id);
+            Inventory inv = new Inventory();
+
+            var ins = inventList.Where(o=> o.InventoryID == inventID).ToList();
+
+            foreach(Inventory instance in ins){
+
+                inv = instance;
+            }
+
+            int stockin = inv.StockIn;
+            /////
+            lblProdNameIMEI.Text = inv.ProdName_;
+            /////
+            
+
+            var ProdImeiList = ProdIMEI.GetIMEIByInventoryID(inventID);
+            int existStock = ProdImeiList.Count;
+            /////
+            List<StockListImei> sliList = new List<StockListImei>();
+
+            for (int x = 0; x < stockin; x++ )
+            {
+                StockListImei sli = new StockListImei();
+
+                sli.ID = x + 1 + "";
+                sli.InventoryID = inventID;
+
+                if (x + 1 <= existStock)
+                {
+                    sli.IMEI = ProdImeiList[x].IMEI;
+                    sli.isAdd = "f";
+                    sli.Out = ProdImeiList[x].Out;
+                }
+                else
+                {
+                    sli.isAdd = "t";
+                }
+
+                sliList.Add(sli);
+            }
+
+            gvSetIMEI.DataSource = sliList;
+            gvSetIMEI.DataBind();
+            //
+
+            
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                mvMain.ActiveViewIndex = 0;
+                CallDataGrid();
+                //
+                loadSupervisor();
+            }
+
+            ///
+        }
+
+        protected void gvKiosk_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            switch (e.CommandName)
+            {
+                case "DoAssign":
+                    int kioskid = Convert.ToInt32(e.CommandArgument.ToString());
+                    DoAssign(kioskid);
+                    mvMain.ActiveViewIndex = 1;
+                    break;
+
+                case "DoEdit":
+                    int kioskid2 = Convert.ToInt32(e.CommandArgument.ToString());
+                    DoEdit(kioskid2);
+                    mvMain.ActiveViewIndex = 3;
+                    break;
+
+                case "DoView":
+                    int kioskid3 = Convert.ToInt32(e.CommandArgument.ToString());
+                    DoView(kioskid3);
+                    mvMain.ActiveViewIndex = 4;
+                    break;
+
+                case "DoIMEI":
+                    int kioskid4 = Convert.ToInt32(e.CommandArgument.ToString());
+                    hdnKioskID.Value = kioskid4.ToString();
+                    DoViewNewItems(kioskid4);
+                    mvMain.SetActiveView(vwNewItems);
+                    break;
+            }
+        }
+
+        protected void btnAssign_Click(object sender, EventArgs e)
+        {
+            foreach(ListItem li in lbxPhone.Items){
+
+                if(li.Selected == true){
+                    lbxPhoneSel.Items.Add(li);
+                }
+            }
+            //
+            foreach(ListItem li in lbxPhoneSel.Items){
+
+                lbxPhone.Items.Remove(li);
+            }
+            //
+            lbxPhoneSel.ClearSelection();
+        }
+
+        protected void btnRevoke_Click(object sender, EventArgs e)
+        {
+            foreach(ListItem li in lbxPhoneSel.Items){
+                //
+                if(li.Selected == true){
+                    lbxPhone.Items.Add(li);
+                }
+            }
+            //
+            foreach(ListItem li in lbxPhone.Items){
+                lbxPhoneSel.Items.Remove(li);
+            }
+            //
+            lbxPhone.ClearSelection();
+        }
+
+        protected void btnClose_Click(object sender, EventArgs e)
+        {
+            mvMain.ActiveViewIndex = 0;
+        }
+
+        protected void btnNext_Click(object sender, EventArgs e)
+        {
+            mvMain.ActiveViewIndex = 2;
+            DoSetStocks();
+        }
+
+        protected void btnPostSave_Click(object sender, EventArgs e)
+        {
+
+            #region Reserved Code
+            //int kioskid = Convert.ToInt32(hdnKioskID.Value);
+            //var newPhoneStocks = new List<Stocks>();
+
+            //int count = gvStockPhone.Rows.Count;
+
+            //for (int x = 0; x < count; x++)
+            //{
+            //    var ins = new Stocks();
+
+            //    int stock = Convert.ToInt32(((TextBox)gvStockPhone.Rows[x].FindControl("tbStocks")).Text);
+            //    int prodid = Convert.ToInt32(gvStockPhone.DataKeys[x].Values["Value"]);
+
+            //    ins.KioskID = kioskid;
+            //    ins.ProdID = prodid;
+            //    ins.StockIn = stock;
+            //    ins.Remarks = tbRemarks.Text.Trim().ToUpper();
+            //    ins.CreatedBy = GlobalAccess.EmpID;
+            //    ins.Reference = tbReference.Text.Trim().ToUpper();
+            //    ins.DistReciept = tbDistReciept.Text.Trim().ToUpper();
+
+
+
+            //    newPhoneStocks.Add(ins);
+
+            //}
+            ////
+            //DoSetIMEI(newPhoneStocks);
+            ////
+            //mvMain.SetActiveView(vSetIMEI); 
+            #endregion
+
+            /////////////////////////////////////////////////////
+
+            int kioskid = Convert.ToInt32(hdnKioskID.Value);
+            //
+
+            // validate items stocks
+            bool isValid = ValidateItemStocks();
+
+            if (!isValid)
+            {
+                (Master as Frame).PopUp("Validating Items Stocks, Zero has found.</br> Enter Stocks not equal to zero.");
+                return;
+            }
+
+            #region Phone Settings
+            var newPhoneStocks = new List<Stocks>();
+
+            int count = gvStockPhone.Rows.Count;
+
+            for (int x = 0; x < count; x++)
+            {
+                var ins = new Stocks();
+
+                int stock = Convert.ToInt32(((TextBox)gvStockPhone.Rows[x].FindControl("tbStocks")).Text);
+                int prodid = Convert.ToInt32(gvStockPhone.DataKeys[x].Values["Value"]);
+
+                ins.KioskID = kioskid;
+                ins.ProdID = prodid;
+                ins.StockIn = stock;
+                ins.Remarks = tbRemarks.Text.Trim().ToUpper();
+                ins.CreatedBy = GlobalAccess.EmpID;
+                ins.Reference = tbReference.Text.Trim().ToUpper();
+                ins.DistReciept = tbDistReciept.Text.Trim().ToUpper();
+
+                newPhoneStocks.Add(ins);
+            }
+            #endregion
+
+            #region Tablet Settings
+            var newTabletStocks = new List<Stocks>();
+
+            int countTab = gvStockTablet.Rows.Count;
+
+            for (int x = 0; x < countTab; x++)
+            {
+                var ins = new Stocks();
+
+                int stock = Convert.ToInt32(((TextBox)gvStockTablet.Rows[x].FindControl("tbStocks")).Text);
+                int prodid = Convert.ToInt32(gvStockTablet.DataKeys[x].Values["Value"]);
+
+                ins.KioskID = kioskid;
+                ins.ProdID = prodid;
+                ins.StockIn = stock;
+                ins.Remarks = tbRemarks.Text.Trim().ToUpper();
+                ins.CreatedBy = GlobalAccess.EmpID;
+                ins.Reference = tbReference.Text.Trim().ToUpper();
+                ins.DistReciept = tbDistReciept.Text.Trim().ToUpper();
+
+                newTabletStocks.Add(ins);
+            }
+            #endregion
+
+            #region Accessory Settings
+            var newAccessoryStocks = new List<Stocks>();
+
+            int countAcc = gvStockAccessory.Rows.Count;
+
+            for (int x = 0; x < countAcc; x++)
+            {
+                var ins = new Stocks();
+
+                int stock = Convert.ToInt32(((TextBox)gvStockAccessory.Rows[x].FindControl("tbStocks")).Text);
+                int prodid = Convert.ToInt32(gvStockAccessory.DataKeys[x].Values["Value"]);
+
+                ins.KioskID = kioskid;
+                ins.ProdID = prodid;
+                ins.StockIn = stock;
+                ins.Remarks = tbRemarks.Text.Trim().ToUpper();
+                ins.CreatedBy = GlobalAccess.EmpID;
+                ins.Reference = tbReference.Text.Trim().ToUpper();
+                ins.DistReciept = tbDistReciept.Text.Trim().ToUpper();
+
+                newAccessoryStocks.Add(ins);
+            }
+            #endregion
+            /////
+            bool isSuccess = true;
+            try
+            {
+                Stocks.ModifyNewStocks(newPhoneStocks, (int)ProductType.Phone, kioskid);
+                Stocks.ModifyNewStocks(newTabletStocks, (int)ProductType.Tablet, kioskid);
+                Stocks.ModifyNewStocks(newAccessoryStocks, (int)ProductType.Accessory, kioskid);
+            }
+            catch (Exception eee)
+            {
+                (Master as Frame).PopUp(eee.Message);
+                isSuccess = false;
+                //throw;
+            }
+
+            if (isSuccess)
+            {
+                //(Master as Frame).PopUp("Transaction Complete");
+                //mvMain.ActiveViewIndex = 0;
+
+                int id = Convert.ToInt32(hdnKioskID.Value);
+                DoViewNewItems(id);
+
+                mvMain.SetActiveView(vwNewItems);
+
+                lbxPhoneSel.Items.Clear();
+                lbxTabletSel.Items.Clear();
+                lbxAccessorySel.Items.Clear();
+            }
+        }
+
+        protected void gvStockSet_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if(e.Row.RowType == DataControlRowType.DataRow){
+                //
+                int prodid = Convert.ToInt32(gvStockPhone.DataKeys[e.Row.RowIndex].Value);
+                int kioskid = Convert.ToInt32(hdnKioskID.Value);
+                //
+                var ins = Stocks.GetStocksByKioskID_ProdID(kioskid, prodid);
+                //
+                TextBox tb = (TextBox)e.Row.FindControl("tbStocks");
+                tb.Style["text-align"] = "center";
+                tb.Text = ins.StockIn.ToString();
+            }
+        }
+
+        protected void btnCloseFinal_Click(object sender, EventArgs e)
+        {
+            mvMain.ActiveViewIndex = 1;
+        }
+
+        protected void btnAssignTab_Click(object sender, EventArgs e)
+        {
+            foreach (ListItem li in lbxTablet.Items)
+            {
+
+                if (li.Selected == true)
+                {
+                    lbxTabletSel.Items.Add(li);
+                }
+            }
+            //
+            foreach (ListItem li in lbxTabletSel.Items)
+            {
+
+                lbxTablet.Items.Remove(li);
+            }
+            //
+            lbxTabletSel.ClearSelection();
+        }
+
+        protected void btnRevokeTab_Click(object sender, EventArgs e)
+        {
+            foreach (ListItem li in lbxTabletSel.Items)
+            {
+                //
+                if (li.Selected == true)
+                {
+                    lbxTablet.Items.Add(li);
+                }
+            }
+            //
+            foreach (ListItem li in lbxTablet.Items)
+            {
+                lbxTabletSel.Items.Remove(li);
+            }
+            //
+            lbxTablet.ClearSelection();
+        }
+
+        protected void btnAsssignAcc_Click(object sender, EventArgs e)
+        {
+            foreach (ListItem li in lbxAccessory.Items)
+            {
+
+                if (li.Selected == true)
+                {
+                    lbxAccessorySel.Items.Add(li);
+                }
+            }
+            //
+            foreach (ListItem li in lbxAccessorySel.Items)
+            {
+
+                lbxAccessory.Items.Remove(li);
+            }
+            //
+            lbxAccessorySel.ClearSelection();
+        }
+
+        protected void btnRevokeAcc_Click(object sender, EventArgs e)
+        {
+            foreach (ListItem li in lbxAccessorySel.Items)
+            {
+                //
+                if (li.Selected == true)
+                {
+                    lbxAccessory.Items.Add(li);
+                }
+            }
+            //
+            foreach (ListItem li in lbxAccessory.Items)
+            {
+                lbxAccessorySel.Items.Remove(li);
+            }
+            //
+            lbxAccessory.ClearSelection();
+        }
+
+        protected void gvStockTablet_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                //
+                int prodid = Convert.ToInt32(gvStockTablet.DataKeys[e.Row.RowIndex].Value);
+                int kioskid = Convert.ToInt32(hdnKioskID.Value);
+                //
+                var ins = Stocks.GetStocksByKioskID_ProdID(kioskid, prodid);
+                //
+                TextBox tb = (TextBox)e.Row.FindControl("tbStocks");
+                tb.Style["text-align"] = "center";
+                tb.Text = ins.StockIn.ToString();
+            }
+        }
+
+        protected void gvStockAccessory_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                //
+                int prodid = Convert.ToInt32(gvStockAccessory.DataKeys[e.Row.RowIndex].Value);
+                int kioskid = Convert.ToInt32(hdnKioskID.Value);
+                //
+                var ins = Stocks.GetStocksByKioskID_ProdID(kioskid, prodid);
+                //
+                TextBox tb = (TextBox)e.Row.FindControl("tbStocks");
+                tb.Style["text-align"] = "center";
+                tb.Text = ins.StockIn.ToString();
+            }
+        }
+
+        protected void btnAdd_Click(object sender, EventArgs e)
+        {
+            DoAdd();
+        }
+
+        protected void btnKioskCancel_Click(object sender, EventArgs e)
+        {
+            mvMain.ActiveViewIndex = 0;
+        }
+
+        protected void btnKioskSave_Click(object sender, EventArgs e)
+        {
+            string name = tbKioskName.Text.Trim().ToUpper();
+            string location = tbKioskLocation.Text.Trim().ToUpper();
+            string remarks = tbKioskRemarks.Text.Trim().ToUpper();
+            int classid = Convert.ToInt32(ddlClass.SelectedValue);
+            string kioskcode = tbKioskCode.Text.Trim().ToUpper();
+
+            int kioskid = Convert.ToInt32(hdnKioskID.Value);
+
+            bool isInserted = true;
+            string msg = "";
+            try
+            {
+                if (kioskid == 0)
+                { // insert method
+                    Kiosk.InsertKiosk(name, location, remarks, classid, kioskcode);
+                    msg = "Insert Success";
+                }
+                else // update method
+                {
+                    Kiosk.UpdateKiosk(kioskid, name, location, remarks, classid);
+                    msg = "Update Success";
+                }
+            }catch(Exception ee){
+                isInserted = false;
+                (Master as Frame).PopUp(ee.Message);
+            }
+
+            if (isInserted)
+            {
+                (Master as Frame).PopUp(msg);
+                CallDataGrid();
+                mvMain.ActiveViewIndex = 0;
+            }
+            
+        }
+
+        protected void btnBackMain_Click(object sender, EventArgs e)
+        {
+            CallDataGrid();
+            mvMain.ActiveViewIndex = 0;
+        }
+
+        protected void gvInventory_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            switch(e.CommandName){
+                case "DoActive":
+                    string[] active = Convert.ToString(e.CommandArgument.ToString()).Split(new char[] {','}, StringSplitOptions.None);
+                    int InvID = Convert.ToInt32(active[1]);
+                    int KioskID = Convert.ToInt32(hdnKioskID.Value);
+                    
+                    if(active[0] == "t"){
+                        //
+                        try{
+                            //
+                            Inventory.UpdateActiveStatus("f", InvID);
+                            //
+                            gvInventory.DataSource = Inventory.GetAllByKiosk(KioskID);
+                            gvInventory.DataBind();
+                            //
+                            (Master as Frame).PopUp("Selected Item is Inactive");
+                        }catch(Exception ee){
+                            (Master as Frame).PopUp(ee.Message);
+                        }
+                    } else {
+                        try
+                        {
+                            //
+                            Inventory.UpdateActiveStatus("t", InvID);
+                            //
+                            gvInventory.DataSource = Inventory.GetAllByKiosk(KioskID);
+                            gvInventory.DataBind();
+                            //
+                            (Master as Frame).PopUp("Selected Item is Active");
+                        }
+                        catch (Exception ee)
+                        {
+                            (Master as Frame).PopUp(ee.Message);
+                        }
+                    }
+                    break;
+
+            }
+            //
+        }
+
+        protected void gvInventory_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                int invid = Convert.ToInt32(gvInventory.DataKeys[e.Row.RowIndex].Value);
+                var instance = Inventory.GetSelectedInventory(invid);
+
+                Button btnActive = e.Row.FindControl("btnActive") as Button;
+
+                if (instance.Active == "t")
+                {
+                    btnActive.Text = "Inactive";
+                    btnActive.BorderColor = Color.Red;
+                }
+                else
+                {
+                    btnActive.Text = "Activate";
+                    btnActive.BorderColor = Color.Green;
+                } 
+            }
+        }
+
+        protected void gvNewItems_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if(e.Row.RowType == DataControlRowType.DataRow){
+                //
+                int prodID = Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "ProdID"));
+
+                var ins = Products.GetSelectedProduct(prodID);
+
+                Button btnSetImei = e.Row.FindControl("btnSetIMEI") as Button;
+
+                if(ins.Category == "ACCESSORY"){
+                    btnSetImei.Enabled = false;
+                }
+
+            }
+        }
+
+        protected void gvNewItems_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            switch(e.CommandName){
+                case "DoSetIMEI":
+                    int inventoryID = Convert.ToInt32(e.CommandArgument.ToString());
+
+                    DoPrepareIMEI(inventoryID);
+
+                    mvMain.SetActiveView(vwSetIMEI);
+
+                    break;
+            }
+        }
+
+        protected void gvSetIMEI_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                TextBox tbLoadImei = e.Row.FindControl("tbIMEIset") as TextBox;
+                Label lblOut = e.Row.FindControl("lblIMEIout") as Label;
+                
+
+                string imei = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "IMEI"));
+                string outStr = Convert.ToString(DataBinder.Eval(e.Row.DataItem, "Out"));
+
+                outStr = outStr == "t"? "True" : "False" ;
+                
+
+                if (imei.Length != 0)
+                {
+                    tbLoadImei.Text = imei;
+                    tbLoadImei.Enabled = false;
+
+                    lblOut.Text = outStr;
+                }
+                else
+                {
+                    tbLoadImei.Enabled = true;
+                    
+                }
+            }
+        }
+
+        protected void btnSaveAll_Click(object sender, EventArgs e)
+        {
+            //GridView[] ArrGridView = (GridView[])Session["GridViewArr"];
+            //string s = "" ;
+            //foreach (GridView gv in ArrGridView)
+            //{
+            //    s = ((TextBox)gv.Rows[0].FindControl("tbIMEI")).Text;
+            //}
+
+            //(Master as Frame).PopUp(s);
+
+            //string message = "";
+            //foreach (TextBox textBox in PnlIMEI.Controls.OfType<TextBox>())
+            //{
+            //    message += textBox.ID + ": " + textBox.Text + "\\n";
+            //}
+            //ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", "alert('" + message + "');", true);
+        }
+
+        protected void btnIMEISave_Click(object sender, EventArgs e)
+        {
+            var prodIMEIList = new List<ProdIMEI>();
+
+            int count = gvSetIMEI.Rows.Count;
+
+            for (int x = 0; x < count; x++)
+            {
+                var ins = new ProdIMEI();
+
+                ins.IMEI = ((TextBox)gvSetIMEI.Rows[x].FindControl("tbIMEIset")).Text;
+                ins.InventoryID = Convert.ToInt32(gvSetIMEI.DataKeys[x].Values["InventoryID"]);
+                string isAdd = Convert.ToString(gvSetIMEI.DataKeys[x].Values["isAdd"]);
+
+                if(isAdd == "t"){
+                    prodIMEIList.Add(ins);
+                }
+                
+            }
+            /////
+            foreach (ProdIMEI pi in prodIMEIList)
+            {
+                if(pi.IMEI == ""){
+                    (Master as Frame).PopUp("All Fields are Required");
+                    return;
+                }
+            }
+            //////
+            try
+            {
+                ProdIMEI.InsertNewIMEI(prodIMEIList);
+
+                mvMain.SetActiveView(vwNewItems);
+
+                int id = Convert.ToInt32(hdnKioskID.Value);
+                DoViewNewItems(id);
+
+                (Master as Frame).PopUp("IMEI Set Success");
+
+            }
+            catch(Exception ee)
+            {
+                (Master as Frame).PopUp(ee.Message);
+            }
+            //
+        }
+
+        protected void btnIMEICancel_Click(object sender, EventArgs e)
+        {
+            mvMain.SetActiveView(vwNewItems);
+        }
+
+        protected void btnMainBack_Click(object sender, EventArgs e)
+        {
+            mvMain.SetActiveView(vMain);
+        }
+
+        //public class AddTemplateToGridView: ITemplate
+        //{
+        //    ListItemType _type;
+        //    string _colName;
+
+        //    public AddTemplateToGridView(ListItemType type, string colname)
+        //    {
+        //        _type = type;
+        //        _colName = colname;
+        //    }
+
+        //    void ITemplate.InstantiateIn(System.Web.UI.Control container)
+        //    {
+        //        switch(_type){
+        //            case ListItemType.Item:
+
+        //                //HyperLink ht = new HyperLink();
+        //                // ht.Target = "_blank"; 
+        //                // ht.DataBinding+=new EventHandler(ht_DataBinding);
+        //                // container.Controls.Add(ht); 
+
+        //                TextBox tb = new TextBox();
+        //                tb.ID = "tbIMEI";
+        //                //tb.Text = "son";
+        //                tb.Width = 210;
+                        
+                        
+        //                container.Controls.Add(tb);
+        //                break;
+        //        }
+        //    }
+
+
+        //    void ht_DataBinding(object sender, EventArgs e)
+        //    {
+        //        HyperLink lnk = (HyperLink)sender;
+        //        GridViewRow container = (GridViewRow)lnk.NamingContainer;
+        //        //object dataValue = DataBinder.Eval(container.DataItem, _colName);
+        //        //if (dataValue != DBNull.Value)
+        //        //{
+        //        //    lnk.Text = dataValue.ToString();
+        //        //    lnk.NavigateUrl = "http://www.booktitles.com";
+        //        //}
+
+        //        lnk.Text = "sonic";
+        //    }
+
+        //}
+
+        private class StockListImei
+        {
+            public string ID { get; set; }
+            public string IMEI { get; set; }
+            public int InventoryID { get; set; }
+            public string isAdd { get; set; }
+            public string Out { get; set; }
+
+            public StockListImei()
+            {
+                this.ID = "";
+                this.IMEI = "";
+                this.InventoryID = 0;
+                this.isAdd = "f";
+                this.Out = "null";
+            }
+        }
+
+        
+
+        
+
+ 
+        
+
+    }
+}

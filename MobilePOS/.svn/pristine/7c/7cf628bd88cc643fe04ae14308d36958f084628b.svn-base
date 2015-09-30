@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="D:\BENKURAMA FILES\VISUAL STUDIO 2010\PUBLISH\mobileDataFeed" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="True" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="bin/libPOS.pdb" publishTime="07/20/2015 15:32:24" />
+    <file relUrl="bin/DataFeed.dll" publishTime="07/20/2015 15:32:26" />
+    <file relUrl="Scripts/jquery-1.4.1.min.js" publishTime="03/31/2015 15:44:53" />
+    <file relUrl="Scripts/jquery-1.4.1-vsdoc.js" publishTime="03/31/2015 15:44:53" />
+    <file relUrl="Web.config" publishTime="04/13/2015 17:11:44" />
+    <file relUrl="bin/DataFeed.pdb" publishTime="07/20/2015 15:32:26" />
+    <file relUrl="Default.aspx" publishTime="03/31/2015 15:56:31" />
+    <file relUrl="bin/Newtonsoft.Json.dll" publishTime="11/20/2012 22:45:52" />
+    <file relUrl="Scripts/jquery-1.4.1.js" publishTime="03/31/2015 15:44:53" />
+    <file relUrl="bin/libPOS.dll" publishTime="07/20/2015 15:32:25" />
+  </publishProfile>
+</publishData>

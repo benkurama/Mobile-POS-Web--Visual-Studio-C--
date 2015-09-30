@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using libPOS.BLL;
+
+namespace MobilePOS
+{
+    public partial class _Default : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            alertError.Visible = false;
+            // temporary code
+            //tbUserID.Text = "admindev";
+            //tbPassword.Text = "redfoot";
+        }
+
+        protected void btnLogin_Click(object sender, EventArgs e)
+        {
+            string username = tbUserID.Text.Trim();
+
+            if (username != "")
+            {
+                var instance = Employee.GetEmployeeByUsername(username);
+
+                if (tbPassword.Text.Trim() == instance.Password && instance.EmpID != "")
+                {
+                    //
+                    GlobalAccess.EmpID = instance.EmpID;
+                    GlobalAccess.Username = instance.Username;
+                    GlobalAccess.Password = instance.Password;
+                    GlobalAccess.Department = instance.Department;
+                    GlobalAccess.UserLevel = instance.UserLevel;
+                    GlobalAccess.MobileNo = instance.MobileNo;
+                    GlobalAccess.Fullname = instance.Firstname + " " + instance.Lastname;
+                    //
+                    Response.Redirect("Home.aspx");
+                }
+                else
+                {
+                    alertError.Visible = true;
+                }
+            }
+            else
+            {
+                alertError.Visible = true;
+            }
+
+        }
+    }
+}

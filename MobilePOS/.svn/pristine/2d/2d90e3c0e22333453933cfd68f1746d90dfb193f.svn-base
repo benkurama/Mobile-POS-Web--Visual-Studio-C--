@@ -1,0 +1,224 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+using libPOS.DAL;
+
+namespace libPOS.BLL
+{
+    public class Products
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public string Category { get; set; }
+        public string UnitCode { get; set; }
+        public string ImgUrl { get; set; }
+        public int ImgWidth { get; set; }
+        public int ImgHeight { get; set; }
+        public string Specs { get; set; }
+        public DateTime? DateCreated { get; set; }
+        public DateTime? DateUpdated { get; set; }
+        public string EmpID { get; set; }
+        public string ProdCode { get; set; }
+        public int IMEI { get; set; }
+        public string ColorCode { get; set; }
+        public string Active { get; set; }
+
+        public int _StockIn { get; set; }
+
+        public Products()
+        {
+            this.ID = 0;
+            this.Name = "";
+            this.Price = 0;
+            this.Category = "";
+            this.UnitCode = "";
+            this.ImgUrl = "";
+            this.ImgWidth = 0;
+            this.ImgHeight = 0;
+            this.Specs = "";
+            this.DateCreated = null;
+            this.DateUpdated = null;
+            this.EmpID = "";
+            this.ProdCode = "";
+            this.IMEI = 0;
+            this.ColorCode = "";
+            this.Active = "";
+            this._StockIn = 0;
+        }
+
+        public void Bind(DataRow row)
+        {
+            if(row != null){
+
+                this.ID = Convert.ToInt32(row["ProdID"]);
+                this.Name = Convert.ToString(row["ProdName"]);
+                this.Price = Convert.ToDecimal(row["Price"]);
+                this.Category = Convert.ToString(row["Type"]);
+                this.UnitCode = Convert.ToString(row["UnitCode"]);
+                this.ImgUrl = Convert.ToString(row["ImgUrl"]);
+                this.ImgWidth = Convert.ToInt32(row["ImgWidth"]);
+                this.ImgHeight = Convert.ToInt32(row["ImgHeight"]);
+                this.Specs = Convert.ToString(row["Specs"]);
+                this.DateCreated = Convert.ToDateTime(row["DateCreated"]);
+                this.DateUpdated = Convert.ToDateTime(row["DateUpdated"]);
+
+                this.EmpID = Convert.ToString(row["EmpID"]);
+                this.ProdCode = Convert.ToString(row["ProdCode"]);
+
+                this.IMEI = row["IMEI"].ToString() != String.Empty ? Convert.ToInt32(row["IMEI"]) : 0;
+                
+                this.ColorCode = Convert.ToString(row["ColorCode"]);
+                this.Active = Convert.ToString(row["Active"]);
+            }
+        }
+
+        public void Bind2(DataRow row)
+        {
+            if (row != null)
+            {
+                this.ID = Convert.ToInt32(row["ProdID"]);
+                this.Name = Convert.ToString(row["ProdName"]);
+                this.Price = Convert.ToDecimal(row["Price"]);
+                this.Category = Convert.ToString(row["Type"]);
+                this.UnitCode = Convert.ToString(row["UnitCode"]);
+                this.ImgUrl = Convert.ToString(row["ImgUrl"]);
+                this.ImgWidth = Convert.ToInt32(row["ImgWidth"]);
+                this.ImgHeight = Convert.ToInt32(row["ImgHeight"]);
+                this.Specs = Convert.ToString(row["Specs"]);
+                this.DateCreated = Convert.ToDateTime(row["DateCreated"]);
+                this.DateUpdated = Convert.ToDateTime(row["DateUpdated"]);
+
+                this.EmpID = Convert.ToString(row["EmpID"]);
+                this.ProdCode = Convert.ToString(row["ProdCode"]);
+
+                this.IMEI = row["IMEI"].ToString() != String.Empty ? Convert.ToInt32(row["IMEI"]) : 0;
+
+                this.ColorCode = Convert.ToString(row["ColorCode"]);
+                this.Active = Convert.ToString(row["Active"]);
+                this._StockIn = Convert.ToInt32(row["StockIn"]);
+            }
+        }
+
+        public static List<Products> GetAllProducts()
+        {
+            var dal = new ProductsDAL();
+            var collection = new List<Products>();
+
+            foreach (DataRow row in dal.GetAllProducts().Rows)
+            {
+                var instance = new Products();
+                instance.Bind(row);
+                collection.Add(instance);
+            }
+
+            return collection;
+        }
+
+        public static Products GetSelectedProduct(int id)
+        {
+            List<Products> col = GetAllProducts();
+
+            var ins = col.Where(o => o.ID == id).ToList();
+
+            return ins[0];
+        }
+
+        public static List<Products> GetAllPhones()
+        {
+            var dal = new ProductsDAL();
+            var collection = new List<Products>();
+
+            foreach(DataRow row in dal.GetAllPhones().Rows){
+                var instance = new Products();
+                instance.Bind(row);
+                collection.Add(instance);
+            }
+
+            return collection;
+        }
+
+        public static List<Products> GetPhoneByTypeByKiosk(int type, int kioskid)
+        {
+            var dal = new ProductsDAL();
+            var collection = new List<Products>();
+
+            foreach (DataRow row in dal.GetPhoneByTypeByKiosk(type, kioskid).Rows)
+            {
+                var instance = new Products();
+                instance.Bind2(row);
+                collection.Add(instance);
+            }
+
+            return collection;
+        }
+
+        public static List<Products> GetAllTablets()
+        {
+            var dal = new ProductsDAL();
+            var collection = new List<Products>();
+
+            foreach(DataRow row in dal.GetAllTablets().Rows){
+                var instance = new Products();
+                instance.Bind(row);
+                collection.Add(instance);
+            }
+
+            return collection;
+        }
+
+        public static List<Products> GetAllAccessories()
+        {
+            var dal = new ProductsDAL();
+            var collection = new List<Products>();
+
+            foreach (DataRow row in dal.GetAllAccessories().Rows)
+            {
+                var instance = new Products();
+                instance.Bind(row);
+                collection.Add(instance);
+            }
+
+            return collection;
+        }
+
+        public static bool InsertNewItem(Products ins, int Type)
+        {
+            var dal = new ProductsDAL();
+
+            return dal.InsertNewItem(ins, Type);
+
+        }
+
+        public static bool UpdatedSelItem(Products ins, int Type)
+        {
+            var dal = new ProductsDAL();
+            return dal.UpdatedSelItem(ins, Type);
+        }
+
+        public static List<Products> GetAllProductsFilterByType(int type, string filter)
+        {
+            var dal = new ProductsDAL();
+            var collection = new List<Products>();
+
+            foreach (DataRow row in dal.GetAllProductsFilterByType(type, filter).Rows)
+            {
+                var instance = new Products();
+                instance.Bind(row);
+                collection.Add(instance);
+            }
+         
+            return collection;
+        }
+
+
+
+        public static void UpdateActiveStatus(string status, int id)
+        {
+            var dal = new ProductsDAL();
+            dal.UpdateActiveStatus(status, id);
+        }
+    }
+}

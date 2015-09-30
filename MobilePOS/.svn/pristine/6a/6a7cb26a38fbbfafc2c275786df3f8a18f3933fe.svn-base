@@ -1,0 +1,23 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Frame.Master" AutoEventWireup="true" CodeBehind="Home.aspx.cs" Inherits="MobilePOS.Home" %>
+
+
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+
+
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+
+    <div style="margin: 0 auto;width:950px;border: 1px #e1e1e1 solid;padding:10px; background-color:#fff;border-radius:6px; ">
+
+        <div class="alert alert-success" role="alert">
+            <b>Welcome <asp:Label ID="lblUser" runat="server" Text="User"></asp:Label>...</b> You can manage as Admin in this dashboard...
+        </div>
+        
+
+
+
+        
+    </div>
+    
+</asp:Content>

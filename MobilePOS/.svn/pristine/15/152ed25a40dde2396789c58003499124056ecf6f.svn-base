@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+
+namespace libPOS.DAL
+{
+    internal class Kiosk_ClassDAL : BaseDAL
+    {
+
+        internal DataTable GetAllSupervisor()
+        {
+            base.com.CommandText = "spGetAllClass";
+            return base.GetDataTable();
+        }
+    }
+}

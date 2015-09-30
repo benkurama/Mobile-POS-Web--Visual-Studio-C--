@@ -1,0 +1,74 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Frame.Master" AutoEventWireup="true" CodeBehind="SalesReport.aspx.cs" Inherits="MobilePOS.SalesReport" %>
+<%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="cc1" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <div style="margin: 0 auto;width:950px; border-radius:6px; ">
+        <div id="panelBox" class="panel panel-info" runat="server">
+            <div class="panel-heading">
+                <asp:Label ID="lblTitle" runat="server" Text="Sales Report" Font-Bold="True"></asp:Label>
+            </div>
+            <div class="panel-body">
+                <asp:MultiView ID="mvMain" runat="server" ActiveViewIndex="0">
+                    <asp:View ID="vwMain" runat="server">
+                        <table>
+                            <tr>
+                                <td>
+                                    <asp:Panel ID="Panel1" runat="server" DefaultButton="btnFilter">
+                                        <table width=100%>
+                                            <tr>
+                                                <td valign="middle" style="padding:10px;">
+                                                    DATE START :
+                                                    <asp:TextBox ID="tbStart" runat="server" Width="150px" CssClass="date" MaxLength="10" placeholder="yyyy-mm-dd">
+                                                    </asp:TextBox>
+                                                    &nbsp;&nbsp;&nbsp;
+                                                    DATE END :
+                                                    <asp:TextBox ID="tbEnd" runat="server" Width="150px" CssClass="date" MaxLength="10" placeholder="yyyy-mm-dd">
+                                                    </asp:TextBox>
+                                                    &nbsp;&nbsp;&nbsp;
+                                                    <asp:Button ID="btnFilter" runat="server" Text="Filter" Width="100px" onclick="btnFilter_Click" 
+                                                        />
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </asp:Panel>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <asp:GridView ID="gvSalesRep" runat="server"
+                                        GridLines="None"  
+                                        AutoGenerateColumns="false"
+                                        
+                                        AllowPaging="true" PageSize="20"  
+                                        CssClass="mGrid"  
+                                        PagerStyle-CssClass="pgr"  
+                                        AlternatingRowStyle-CssClass="alt" 
+                                        onpageindexchanging="gvSalesRep_PageIndexChanging"  >
+                                        <EmptyDataTemplate>No Record(s) found.</EmptyDataTemplate>
+                                        <Columns>
+                                            <asp:BoundField DataField="DateSales" HeaderStyle-Width="100" HeaderText="Date of Sale" />
+                                            <asp:BoundField DataField="KioskCode" HeaderStyle-Width="80" HeaderText="Kiosk ID" />
+                                            <asp:BoundField DataField="ClassName" HeaderStyle-Width="100" HeaderText="Class Name" />
+                                            <asp:BoundField DataField="KioskName" HeaderStyle-Width="200" HeaderText="Kiosk Name" />
+                                            <asp:BoundField DataField="ProdName" HeaderStyle-Width="300" HeaderText="Products" />
+                                            <asp:BoundField DataField="TotalQty" HeaderStyle-Width="50" HeaderText="Qty" />
+                                            <asp:BoundField DataField="UnitPx" HeaderStyle-Width="100" HeaderText="Unit Price" DataFormatString="{0:#,0}" />
+                                        </Columns>
+                                    </asp:GridView>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <asp:Button ID="btnExport" runat="server" Text="Export to Excel" 
+                                        CssClass="btn btn-primary" onclick="btnExport_Click"  />
+                                    
+                                </td>
+                            </tr>
+                        </table>
+                    </asp:View>
+                </asp:MultiView>
+            </div>
+        </div>
+    </div>
+</asp:Content>

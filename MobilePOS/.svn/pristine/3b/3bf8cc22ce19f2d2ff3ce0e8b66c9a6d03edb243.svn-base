@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+using libPOS.DAL;
+
+namespace libPOS.BLL
+{
+    public class Kiosk_Class
+    {
+        public int ClassID { get; set; }
+        public string ClassName { get; set; }
+        public string SuperVisor { get; set; }
+
+        public Kiosk_Class()
+        {
+            this.ClassID = 0;
+            this.ClassName = "";
+            this.SuperVisor = "";
+        }
+
+        public void Bind(DataRow row)
+        {
+            if(row != null){
+                this.ClassID = Convert.ToInt32(row["ClassID"]);
+                this.ClassName = Convert.ToString(row["ClassName"]);
+                this.SuperVisor = Convert.ToString(row["SuperVisor"]);
+            }
+        }
+
+        public static List<Kiosk_Class> GetAllSupervisor()
+        {
+            var dal = new Kiosk_ClassDAL();
+            var collection = new List<Kiosk_Class>();
+
+            foreach (DataRow row in dal.GetAllSupervisor().Rows)
+            {
+                var ins = new Kiosk_Class();
+                ins.Bind(row);
+                collection.Add(ins);
+            }
+
+            return collection;
+        }
+
+        public static bool InsertSupervisor(string classtype, string supervisor)
+        {
+            var dal = new Kiosk_ClassDAL();
+            return dal.InsertSupervisor(classtype, supervisor);
+        }
+    }
+}

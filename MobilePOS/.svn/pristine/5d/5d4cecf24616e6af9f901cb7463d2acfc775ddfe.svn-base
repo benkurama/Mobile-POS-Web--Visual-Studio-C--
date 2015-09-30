@@ -1,0 +1,768 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using libPOS.BLL;
+using DataFeed.Class;
+using Newtonsoft.Json;
+
+namespace DataFeed
+{
+    public partial class _Default : System.Web.UI.Page
+    {
+        // =========================================================================
+        // Variables
+        // =========================================================================
+        enum ItemType
+        {
+            Phone = 1,
+            Tablet = 2,
+            Accessory = 3
+        }
+        // =========================================================================
+        // Overrides
+        // =========================================================================
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+            ///// 
+            string typeQ = Request["type"];
+
+            switch(typeQ){
+                case "user":
+                    UserValidation();
+                    break;
+                case "userlog":
+                    UserLog();
+                    break;
+                case "getuserlog":
+                    GetUserLog();
+                    break;
+                case "phone":
+                    PhoneQuery();
+                    break;
+                case "tablet":
+                    TabletQuery();
+                    break;
+                case "accessory":
+                    AccessoryQuery();
+                    break;
+                case "sales":
+                    SalesInvoice();
+                    break;
+                case "saleshistory":
+                    SalesHistory();
+                    break;
+                case "stocks":
+                    StocksInventory();
+                    break;
+                case "foottraffic":
+                    FootTrafficFunc();
+                    break;
+                case "return":
+                    ReturnProd();
+                    break;
+                default:
+                    Response.Write("Welcome To MobilePOS");
+                    break;
+            }
+        }
+        // =========================================================================
+        // Main Functions
+        // =========================================================================
+        public void ProductQuery()
+        {
+            var collection = Products.GetAllProductsFilterByType((int)ItemType.Phone,"all");
+
+            JsonBridge<Products> datafeed = new JsonBridge<Products>();
+            datafeed.Valid = 1;
+            datafeed.collection = collection;
+
+            string output = JsonConvert.SerializeObject(datafeed);
+            Response.Write(output);
+        }
+
+        public void PhoneQuery()
+        {
+            int kioskid = Convert.ToInt32(Request["kioskid"]);
+           //var collection = Products.GetAllPhones();
+            var collection = Products.GetPhoneByTypeByKiosk(1,kioskid);
+
+            JsonBridge<Products> datafeed = new JsonBridge<Products>();
+
+            datafeed.Valid = collection.Count != 0 ? 1 : 0;
+            datafeed.collection = collection;
+            //
+
+           string output = JsonConvert.SerializeObject(datafeed);
+           Response.Write(output);
+        }
+
+        private void TabletQuery()
+        {
+            //var collection = Products.GetAllProductsFilterByType((int)ItemType.Tablet, "all");
+            int kioskid = Convert.ToInt32(Request["kioskid"]);
+            var collection = Products.GetPhoneByTypeByKiosk(2, kioskid);
+
+            JsonBridge<Products> datafeed = new JsonBridge<Products>();
+            datafeed.Valid = collection.Count != 0 ? 1 : 0;
+            datafeed.collection = collection;
+
+            string output = JsonConvert.SerializeObject(datafeed);
+            Response.Write(output);
+        }
+
+        private void AccessoryQuery()
+        {
+            //var collection = Products.GetAllProductsFilterByType((int)ItemType.Accessory, "all");
+            int kioskid = Convert.ToInt32(Request["kioskid"]);
+            var collection = Products.GetPhoneByTypeByKiosk(3, kioskid);
+
+            JsonBridge<Products> datafeed = new JsonBridge<Products>();
+            datafeed.Valid = collection.Count != 0 ? 1 : 0;
+            datafeed.collection = collection;
+
+            string output = JsonConvert.SerializeObject(datafeed);
+            Response.Write(output);
+        }
+
+        private void SalesInvoice()
+        {
+            //string method = Request.QueryString["method"];
+            string method = Request["method"];
+
+            switch(method){
+                case "InsertSalesInfo":
+                    InsertInvoice();
+                    break;
+                case "InsertSalesDetails" :
+                    InsertDetails();
+                    break;
+                case "GetRemarkedSalesInfo":
+                    GetRemarkedSalesInfo();
+                    break;
+                case "GetSalesDetailsByInvoice":
+                    GetSalesDetailsByInvoice();
+                    break;
+                case "UpdateSalesInfo":
+                    UpdateSalesInfo();
+                    break;
+                case "CancelledSalesInfo":
+                    CancelledSalesInfo();
+                    break;
+            }
+        }
+
+        public void UserValidation()
+        {
+            //string username = Request.QueryString["username"];
+            string username = Request["username"];
+            //
+            var instance = Employee.GetEmployeeByUsername(username);
+            //
+            List<Employee> datafeed = new List<Employee>();
+            datafeed.Add(instance);
+            //
+            JsonBridge<Employee> jsonfeed = new JsonBridge<Employee>();
+            if (instance.EmpID != "")
+            {
+                jsonfeed.Valid = 1;
+            }
+            else
+            {
+                jsonfeed.Valid = 0;
+            }
+            jsonfeed.collection = datafeed;
+
+            string output = JsonConvert.SerializeObject(jsonfeed);
+            Response.Write(output);
+        }
+
+        public void UserLog()
+        {
+            string logtype = Request["logtype"];
+            string empid = Request["empid"];
+            string empname = Request["empname"];
+
+            if (logtype == "O")
+            {
+                EmployeeLog.InsertLogOutTime(empid, empname);
+            }
+        }
+
+        private void GetUserLog()
+        {
+            string empid = Request["empid"];
+
+            var collection = EmployeeLog.GetAllLogtimeByUser(empid);
+
+            JsonBridge<EmployeeLog> datafeed = new JsonBridge<EmployeeLog>();
+
+            if (collection.Count != 0)
+            {
+                datafeed.collection = collection;
+                datafeed.Valid = 1;
+            }
+            else
+            {
+                datafeed.collection = collection;
+                datafeed.Valid = 0;
+            }
+
+            string output = JsonConvert.SerializeObject(datafeed);
+            Response.Write(output);
+        }
+
+        private void SalesHistory()
+        {
+            string method = Request["method"];
+
+            switch(method){
+                case "top10product":
+                    Top10ProductMethod();
+                    break;
+                case "salesreport":
+                    SalesReport();
+                    break;
+                case "saleskiosk":
+                    SalesKiosk();
+                    break;
+            }
+        }
+
+        private void StocksInventory()
+        {
+            string method = Request["method"];
+
+            switch(method){
+                case "get":
+                    StockRecieve();
+                    break;
+                case "set":
+                    StockPost();
+                    break;
+            }
+        }
+
+        private void FootTrafficFunc()
+        {
+            string method = Request["method"];
+
+            switch(method){
+                case "set":
+                    PostFootTraffic();
+                    break;
+                case "get":
+                    GetFootTraffic();
+                    break;
+                case "report":
+                    //ReportFootTrafficByMonth();
+                    ReportFootTrafficByDay();
+                    break;
+            }
+        }
+
+        private void ReturnProd()
+        {
+            string method = Request["method"];
+
+            switch(method){
+                case "getinvdetails":
+                    GetInvoiceDetails();
+                    break;
+                case "insertreturninfo":
+                    InsertReturnInfo();
+                    break;
+                case "insertreturndetails":
+                    InsertReturnDetails();
+                    break;
+            }
+        }
+        // =========================================================================
+        // Sub Functions
+        // =========================================================================
+        private void InsertInvoice()
+        {
+            string invno = Request["invno"];
+            string custname = Request["custname"];
+            string address = Request["address"];
+            string emailadd = Request["emailadd"];
+            string contactno = Request["contactno"];
+            string custno = Request["custno"];
+            decimal total = Convert.ToDecimal(Request["total"]);
+            string empid = Request["empid"];
+            string status = Request["status"];
+            string remarks = Request["remarks"];
+            string kioskid = Request["kioskid"];
+
+            //
+            SalesInfo instance = new SalesInfo();
+            instance.InvNo = invno;
+            instance.CustName = custname;
+            instance.Address = address;
+            instance.EmailAdd = emailadd;
+            instance.ContactNo = contactno;
+            instance.CustNo = custno;
+            instance.TotalAmount = total;
+            instance.EmpID = empid;
+            instance.Status = status;
+            instance.Remarks = remarks;
+            instance.KioskID = Convert.ToInt32(kioskid);
+            //
+            bool isInserted = true;
+            JsonBridge<String> ins = new JsonBridge<String>();
+            try
+            {
+                SalesInfo.InsertSalesInfo(instance);
+            }
+            catch (Exception)
+            {
+                isInserted = false;
+            }
+
+            ins.Valid = isInserted == true ? 1 : 0;
+
+            string output = JsonConvert.SerializeObject(ins);
+            Response.Write(output);
+        }
+
+        public void InsertDetails()
+        {
+            string invno = Request["invno"];
+            int prodid = Convert.ToInt32(Request["prodid"]);
+            int qty = Convert.ToInt32(Request["qty"]);
+            decimal unitpx = Convert.ToDecimal(Request["unitpx"]);
+            string prodname = Request["prodname"];
+            //
+            SalesDetails instance = new SalesDetails();
+            instance.InvNo = invno;
+            instance.ProdID = prodid;
+            instance.Qty = qty;
+            instance.UnitPx = unitpx;
+            instance.ProdName_ = prodname;
+            //
+            bool isInserted = true;
+            JsonBridge<String> ins = new JsonBridge<String>();
+            try
+            {
+                SalesDetails.InsertSalesDetails(instance);
+            }
+            catch (Exception)
+            {
+                isInserted = false;
+            }
+
+            ins.Valid = isInserted == true ? 1 : 0;
+
+            string output = JsonConvert.SerializeObject(ins);
+            Response.Write(output);
+        }
+
+        private void GetRemarkedSalesInfo()
+        {
+            string empid = Request["empid"];
+            var collection = SalesInfo.GetRemarkedSales(empid);
+            //
+            JsonBridge<SalesInfo> datafeed = new JsonBridge<SalesInfo>();
+
+            if (collection.Count != 0)
+            {
+                datafeed.collection = collection;
+                datafeed.Valid = 1;
+            }
+            else
+            {
+                datafeed.collection = collection;
+                datafeed.Valid = 0;
+            }
+            //
+            string output = JsonConvert.SerializeObject(datafeed);
+            Response.Write(output);
+        }
+
+        private void GetSalesDetailsByInvoice()
+        {
+            string invno = Request["invno"];
+            var collection = SalesDetails.GetSalesDetailsByInvno(invno);
+            //
+            JsonBridge<SalesDetails> datafeed = new JsonBridge<SalesDetails>();
+            if (collection.Count != 0)
+            {
+                datafeed.collection = collection;
+                datafeed.Valid = 1;
+            }
+            else
+            {
+                datafeed.collection = collection;
+                datafeed.Valid = 0;
+            }
+            //
+            string output = JsonConvert.SerializeObject(datafeed);
+            Response.Write(output);
+        }
+
+        private void UpdateSalesInfo()
+        {
+            string invno = Request["invno"];
+            string custname = Request["custname"];
+            string address = Request["address"];
+            string emailadd = Request["emailadd"];
+            string contact = Request["contact"];
+            string custno = Request["custno"];
+            string total = Request["total"];
+            string status = Request["status"];
+            //
+            SalesInfo si = new SalesInfo();
+            si.InvNo = invno;
+            si.CustName = custname;
+            si.Address = address;
+            si.EmailAdd = emailadd;
+            si.ContactNo = contact;
+            si.CustNo = custno;
+            si.TotalAmount = Convert.ToDecimal(total);
+            si.Status = status;
+            //
+            bool isUpdate = true;
+            JsonBridge<String> updateProc = new JsonBridge<String>();
+            try{
+                SalesInfo.UpdateSalesInfo(si);
+            }catch(Exception e){
+                isUpdate = false;
+            }
+
+            updateProc.Valid = isUpdate == true ? 1 : 0;
+
+            string output = JsonConvert.SerializeObject(updateProc);
+            Response.Write(output);
+        }
+
+        private void CancelledSalesInfo()
+        {
+            string invno = Request["invno"];
+
+            bool isCancelled = true;
+            JsonBridge<String> feed = new JsonBridge<String>();
+            try
+            {
+                SalesInfo.CancelledSalesInfo(invno);
+            }catch(Exception e){
+                isCancelled = false;
+            }
+            //
+            feed.Valid = isCancelled == true ? 1 : 0;
+            //
+            string output = JsonConvert.SerializeObject(feed);
+            Response.Write(output);
+        }
+
+        private void Top10ProductMethod()
+        {
+            string from = Request["from"];
+            string to = Request["to"];
+
+            var collection = Top10Product.GetTop10Products(from, to);
+            JsonBridge<Top10Product> jsonFeed = new JsonBridge<Top10Product>();
+
+            jsonFeed.Valid = collection.Count != 0 ? 1: 0;
+            jsonFeed.collection = collection;
+            //
+            string output = JsonConvert.SerializeObject(jsonFeed);
+            Response.Write(output);
+        }
+
+        private void SalesReport()
+        {
+            string from = Request["from"];
+            string to = Request["to"];
+            string empid = Request["empid"];
+
+            var collection = SalesInfo.GetSalesByDateRange(from, to, empid);
+            JsonBridge<SalesInfo> jsonFeed = new JsonBridge<SalesInfo>();
+
+            jsonFeed.Valid = collection.Count != 0 ? 1 : 0;
+            jsonFeed.collection = collection;
+
+            //
+            string output = JsonConvert.SerializeObject(jsonFeed);
+            Response.Write(output);
+        }
+
+        private void SalesKiosk()
+        {
+            int kioskid = Convert.ToInt32(Request["kioskid"]);
+            string from = Request["from"];
+            string to = Request["to"];
+
+            var collection = SalesInfo.GetSalesByKioskDateRange(from, to, kioskid);
+            JsonBridge<SalesInfo> jsonFeed = new JsonBridge<SalesInfo>();
+
+            jsonFeed.Valid = collection.Count != 0 ? 1 : 0;
+            jsonFeed.collection = collection;
+
+            //
+            string output = JsonConvert.SerializeObject(jsonFeed);
+            Response.Write(output);
+        }
+
+        private void StockRecieve()
+        {
+            string directsupplier = Request["directsupplier"];
+            int kioskid = Convert.ToInt32(Request["kioskid"]);
+
+            var collection = Stocks.GetStocksByReferenceAndKioskID(directsupplier, kioskid);
+            JsonBridge<Stocks> jsonFeed = new JsonBridge<Stocks>();
+
+            jsonFeed.Valid = collection.Count != 0 ? 1 : 0;
+            jsonFeed.collection = collection;
+
+            //
+            string output = JsonConvert.SerializeObject(jsonFeed);
+            Response.Write(output);
+        }
+
+        private void StockPost()
+        {
+            string dr = Request["directsupplier"];
+            int kioskid = Convert.ToInt32(Request["kioskid"]);
+            int stocklist = Convert.ToInt32(Request["stocklist"]);
+            int prodid = Convert.ToInt32(Request["prodid"]);
+            string checkby = Request["checkby"];
+            
+
+            bool isUpdate = true;
+            JsonBridge<String> StocksUpdated = new JsonBridge<String>();
+            try
+            {
+               Stocks.SetStocksByRefKiosdidProdid(dr, kioskid, stocklist, prodid, checkby);
+            }
+            catch (Exception)
+            {
+                isUpdate = false;
+            }
+
+            StocksUpdated.Valid = isUpdate == true ? 1 : 0;
+            string output = JsonConvert.SerializeObject(StocksUpdated);
+            Response.Write(output);
+        }
+
+        private void PostFootTraffic()
+        {
+            int int8am = Convert.ToInt32(Request["8am"]);
+            int int9am = Convert.ToInt32(Request["9am"]);
+            int int10am = Convert.ToInt32(Request["10am"]);
+            int int11am = Convert.ToInt32(Request["11am"]);
+            int int12pm = Convert.ToInt32(Request["12pm"]);
+            int int1pm = Convert.ToInt32(Request["1pm"]);
+            int int2pm = Convert.ToInt32(Request["2pm"]);
+            int int3pm = Convert.ToInt32(Request["3pm"]);
+            int int4pm = Convert.ToInt32(Request["4pm"]);
+            int int5pm = Convert.ToInt32(Request["5pm"]);
+            int int6pm = Convert.ToInt32(Request["6pm"]);
+            int int7pm = Convert.ToInt32(Request["7pm"]);
+            int int8pm = Convert.ToInt32(Request["8pm"]);
+            int int9pm = Convert.ToInt32(Request["9pm"]);
+            int int10pm = Convert.ToInt32(Request["10pm"]);
+            //
+            int kioskid = Convert.ToInt32(Request["kioskid"]);
+            string empcode = Request["empcode"];
+            //
+            int TotalFT = int8am + int9am + int10am + int11am + int12pm + int1pm +
+                int2pm + int3pm + int4pm + int5pm + int6pm + int7pm + int8pm + int9pm +
+                int10pm;
+            //
+            FootTraffic ins = new FootTraffic();
+            ins.i8am = int8am;
+            ins.i9am = int9am;
+            ins.i10am = int10am;
+            ins.i11am = int11am;
+            ins.i12pm = int12pm;
+            ins.i1pm = int1pm;
+            ins.i2pm = int2pm;
+            ins.i3pm = int3pm;
+            ins.i4pm = int4pm;
+            ins.i5pm = int5pm;
+            ins.i6pm = int6pm;
+            ins.i7pm = int7pm;
+            ins.i8pm = int8pm;
+            ins.i9pm = int9pm;
+            ins.i10pm = int10pm;
+            ins.TotalFT = TotalFT;
+
+            ins.KioskID = kioskid;
+            ins.EmpCode = empcode;
+            //
+            
+            //
+            bool isUpdate = true;
+            JsonBridge<String> FootTrafficUpdate = new JsonBridge<String>();
+            try
+            {
+                FootTraffic.InsertFootTrafficCount(ins);
+            }catch(Exception){
+                isUpdate = false;
+            }
+            //
+            FootTrafficUpdate.Valid = isUpdate == true ? 1 : 0;
+            string output = JsonConvert.SerializeObject(FootTrafficUpdate);
+            Response.Write(output);
+        }
+
+        private void GetFootTraffic()
+        {
+            int kioskid = Convert.ToInt32(Request["kioskid"]);
+            string date = Request["date"];
+
+            var instance = FootTraffic.GetFTByKioskAndToday(kioskid, date);
+            var collection = new List<FootTraffic>();
+            collection.Add(instance);
+
+            JsonBridge<FootTraffic> jsonFeed = new JsonBridge<FootTraffic>();
+
+            jsonFeed.Valid = collection.Count != 0 ? 1 : 0;
+            jsonFeed.collection = collection;
+
+            //
+            string output = JsonConvert.SerializeObject(jsonFeed);
+            Response.Write(output);
+        }
+
+        //private void ReportFootTrafficByMonth()
+        //{
+        //    var collection = FootTraffic.ReportFTByMonth();
+        //    JsonBridge<FootTraffic> jsonFeed = new JsonBridge<FootTraffic>();
+        //    //
+        //    jsonFeed.Valid = collection.Count != 0 ? 1 : 0;
+        //    jsonFeed.collection = collection;
+        //    //
+        //    string output = JsonConvert.SerializeObject(jsonFeed);
+        //    Response.Write(output);
+        //}
+
+        private void ReportFootTrafficByDay()
+        {
+            string from = Request["from"];
+            string to = Request["to"];
+            int kioskid = Convert.ToInt32(Request["kioskid"]);
+
+            var collection = FootTraffic.ReportFTByDay(from, to, kioskid);
+            JsonBridge<FootTraffic> jsonFeed = new JsonBridge<FootTraffic>();
+            //
+            jsonFeed.Valid = collection.Count != 0 ? 1 : 0;
+            jsonFeed.collection = collection;
+            //
+            string output = JsonConvert.SerializeObject(jsonFeed);
+            Response.Write(output);
+  
+        }
+
+        private void GetInvoiceDetails()
+        {
+            string invno = Request["invno"];
+
+            var instance = SalesInfo.SelectInvoiceNo(invno);
+            var collection = new List<SalesInfo>();
+            collection.Add(instance);
+            //
+            JsonBridge<SalesInfo> jsonFeed = new JsonBridge<SalesInfo>();
+
+            jsonFeed.Valid = collection.Count != 0 ? 1 : 0;
+            jsonFeed.collection = collection;
+            //
+            string output = JsonConvert.SerializeObject(jsonFeed);
+            Response.Write(output);
+        }
+
+        private void InsertReturnInfo()
+        {
+            
+            string custno = Request["custno"];
+            string custname = Request["custname"];
+            string[] retdate = Request["retdate"].Split(new char[]{'-'},StringSplitOptions.None);
+            string address = Request["address"];
+            string notes = Request["notes"];
+            string empid = Request["empid"];
+            int kioskid = Convert.ToInt32(Request["kioskid"]);
+
+            int year = Convert.ToInt32(retdate[0]);
+            int month = Convert.ToInt32(retdate[1]);
+            int day = Convert.ToInt32(retdate[2]);
+
+            ReturnInfo ri = new ReturnInfo();
+            
+            ri.CustNo = custno;
+            ri.CustName = custname;
+            ri.RetDate = new DateTime(year, month, day);
+            ri.Adress = address;
+            ri.Notes = notes;
+            ri.EmpID = empid;
+            ri.KioskID = kioskid;
+            //
+            //bool isInserted = true;
+            //JsonBridge<String> ins = new JsonBridge<String>();
+            //try
+            //{
+            //    ReturnInfo.InsertReturnInfo(ri);
+            //}
+            //catch (Exception)
+            //{
+            //    isInserted = false;
+            //}
+
+            //ins.Valid = isInserted == true ? 1 : 0;
+            int res = 0;
+            JsonBridge<String> ins = new JsonBridge<String>();
+            try
+            {
+                res = ReturnInfo.InsertReturnInfo(ri);
+            }
+            catch (Exception)
+            {
+                res = 0;
+            }
+
+            ins.Valid = res;
+
+            string output = JsonConvert.SerializeObject(ins);
+            Response.Write(output);
+        }
+
+        private void InsertReturnDetails()
+        {
+            int retno = Convert.ToInt32(Request["retno"]);
+            string invno = Request["invno"];
+            int prodid = Convert.ToInt32(Request["prodid"]);
+            int retqty = Convert.ToInt32(Request["retqty"]);
+            string unit = Request["unit"];
+            decimal unitpx = Convert.ToDecimal(Request["unitpx"]);
+            string reason = Request["reason"];
+            //
+            ReturnDetails rd = new ReturnDetails();
+
+            rd.RetNo = retno;
+            rd.InvNo = invno;
+            rd.ProdID = prodid;
+            rd.RetQty = retqty;
+            rd.Unit = unit;
+            rd.UnitPx = unitpx;
+            rd.Reason = reason;
+            //
+            int res = 0;
+            JsonBridge<String> ins = new JsonBridge<String>();
+            try
+            {
+                res = ReturnDetails.InsertReturnDetails(rd);
+            }catch(Exception ){
+                res = 0;
+            }
+
+            ins.Valid = res;
+
+            string output = JsonConvert.SerializeObject(ins);
+            Response.Write(output);
+        }
+        // =========================================================================
+        // Final
+    }
+}

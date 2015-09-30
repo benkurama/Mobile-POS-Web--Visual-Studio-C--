@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using libPOS.BLL;
+
+namespace MobilePOS
+{
+    public partial class Frame : System.Web.UI.MasterPage
+    {
+
+        public void MessageBox(string msg)
+        {
+            //ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert( '" + msg + "');", true);
+
+            //string scrp = "$('#myModal').modal('show')";
+            //lblPopMessage.Text = msg;
+            //Page.ClientScript.RegisterStartupScript(this.GetType(), "none",
+            //scrp, true
+            //);
+        }
+
+        public void AlertBox(string msg)
+        {
+            Page.ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert( '" + msg + "');", true);
+
+        }
+
+        public void PopUp(string msg)
+        {
+            lblMessage.Text = msg;
+            mpe.Show();
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if(!IsPostBack){
+
+                if (GlobalAccess.EmpID != null)
+                {
+                    lblUserGlobal.Text = GlobalAccess.Username;
+                    lblUserTypeGlobal.Text = GlobalAccess.UserLevel;
+                }
+                else
+                {
+                    Response.Redirect("Default.aspx");
+                }
+            }
+            //////
+        }
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+
+            EmployeeLog.InsertLogOutTime(GlobalAccess.EmpID, GlobalAccess.Fullname);
+            Response.Redirect("Default.aspx");
+        }
+        //////////
+    }
+}

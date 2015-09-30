@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="D:\BENKURAMA FILES\VISUAL STUDIO 2010\PUBLISH\mobilePOS" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="True" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="KioskAssignment.aspx" publishTime="07/02/2015 11:10:06" />
+    <file relUrl="bin/libPOS.dll" publishTime="07/06/2015 15:45:17" />
+    <file relUrl="Img/Css/grd_alt.png" publishTime="03/30/2015 14:52:37" />
+    <file relUrl="bin/MobilePOS.pdb" publishTime="07/06/2015 15:45:18" />
+    <file relUrl="Img/Css/grd_pgr.png" publishTime="03/30/2015 14:53:21" />
+    <file relUrl="Home.aspx" publishTime="06/29/2015 09:55:02" />
+    <file relUrl="css/bootstrap-theme.min.css" publishTime="03/16/2015 08:42:10" />
+    <file relUrl="css/MainStyle.css" publishTime="03/30/2015 15:00:10" />
+    <file relUrl="css/bootstrap.min.css" publishTime="03/16/2015 08:42:10" />
+    <file relUrl="VolumeWeekReport.aspx" publishTime="07/06/2015 11:13:56" />
+    <file relUrl="Scripts/jquery-1.4.1.js" publishTime="03/26/2015 16:07:43" />
+    <file relUrl="AllProducts.aspx" publishTime="06/16/2015 13:12:08" />
+    <file relUrl="css/ui-lightness/images/ui-icons_228ef1_256x240.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="js/jquery-ui-1.8.19.custom.min.js" publishTime="04/23/2012 11:03:16" />
+    <file relUrl="css/ui-lightness/images/ui-bg_glass_100_fdf5ce_1x400.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="Img/plus.png" publishTime="01/21/2013 14:24:58" />
+    <file relUrl="Img/minus.png" publishTime="01/21/2013 14:24:58" />
+    <file relUrl="css/ui-lightness/jquery-ui-1.8.19.custom.css" publishTime="06/30/2015 10:52:59" />
+    <file relUrl="css/bootstrap-theme.css" publishTime="03/16/2015 08:42:08" />
+    <file relUrl="ItemFeed.aspx" publishTime="03/31/2015 13:41:21" />
+    <file relUrl="Scripts/Float.js" publishTime="07/21/2012 23:30:53" />
+    <file relUrl="css/ui-lightness/images/ui-bg_highlight-soft_100_eeeeee_1x100.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="css/ui-lightness/images/ui-bg_diagonals-thick_18_b81900_40x40.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="Employees.aspx" publishTime="05/28/2015 11:29:53" />
+    <file relUrl="MonthlyReport.aspx" publishTime="06/24/2015 13:56:04" />
+    <file relUrl="Scripts/jquery-1.4.1.min.js" publishTime="03/26/2015 16:07:43" />
+    <file relUrl="bin/AjaxControlToolkit.dll" publishTime="03/07/2014 14:11:13" />
+    <file relUrl="css/ui-lightness/images/ui-bg_flat_10_000000_40x100.png" publishTime="04/23/2012 11:03:16" />
+    <file relUrl="css/ui-lightness/images/ui-bg_glass_100_f6f6f6_1x400.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="Default.aspx" publishTime="04/30/2015 10:15:16" />
+    <file relUrl="SalesReport.aspx" publishTime="06/30/2015 11:28:03" />
+    <file relUrl="Frame.Master" publishTime="07/02/2015 15:51:24" />
+    <file relUrl="css/ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="bin/EPPlus.dll" publishTime="04/26/2013 10:43:32" />
+    <file relUrl="css/ui-lightness/images/ui-bg_highlight-soft_75_ffe45c_1x100.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="js/bootstrap.js" publishTime="03/16/2015 08:42:10" />
+    <file relUrl="css/bootstrap.css" publishTime="03/16/2015 08:42:10" />
+    <file relUrl="css/ui-lightness/images/ui-icons_ef8c08_256x240.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="bin/MobilePOS.dll" publishTime="07/06/2015 15:45:19" />
+    <file relUrl="fonts/glyphicons-halflings-regular.svg" publishTime="03/15/2015 05:39:20" />
+    <file relUrl="Img/company-logo.png" publishTime="06/16/2015 11:13:22" />
+    <file relUrl="bin/libPOS.pdb" publishTime="07/06/2015 15:45:16" />
+    <file relUrl="js/jquery-1.7.2.min.js" publishTime="04/17/2012 09:00:28" />
+    <file relUrl="Img/Css/grd_head.png" publishTime="03/30/2015 15:00:58" />
+    <file relUrl="css/ui-lightness/images/ui-bg_glass_65_ffffff_1x400.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="css/ui-lightness/images/ui-bg_diagonals-thick_20_666666_40x40.png" publishTime="04/23/2012 11:03:16" />
+    <file relUrl="SalesInfoDetails.aspx" publishTime="05/11/2015 16:28:44" />
+    <file relUrl="css/ui-lightness/images/ui-icons_ffffff_256x240.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="WeekLyReport.aspx" publishTime="06/25/2015 16:21:02" />
+    <file relUrl="css/ui-lightness/images/ui-icons_222222_256x240.png" publishTime="04/23/2012 11:03:14" />
+    <file relUrl="css/ui-lightness/images/ui-icons_ffd27a_256x240.png" publishTime="04/23/2012 11:03:16" />
+    <file relUrl="js/npm.js" publishTime="03/16/2015 08:42:10" />
+    <file relUrl="DailyReport.aspx" publishTime="06/26/2015 17:06:08" />
+    <file relUrl="Web.config" publishTime="04/17/2015 15:03:08" />
+    <file relUrl="js/bootstrap.min.js" publishTime="03/16/2015 08:42:10" />
+    <file relUrl="bin/Newtonsoft.Json.dll" publishTime="11/20/2012 22:45:52" />
+    <file relUrl="Scripts/jquery-1.4.1-vsdoc.js" publishTime="03/26/2015 16:07:43" />
+  </publishProfile>
+</publishData>
